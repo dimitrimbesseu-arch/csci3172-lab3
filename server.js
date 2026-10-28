@@ -1,10 +1,12 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = 3000;
 
 // Built-in middleware to parse JSON payloads
 app.use(express.json());
+app.use(cookieParser());
 
 
 // PART 2: CUSTOM MIDDLEWARE
@@ -102,6 +104,23 @@ app.delete('/api/items/:id', (req, res) => {
 
   games.splice(index, 1);
   res.status(204).send();
+});
+
+
+// L12 ACTIVITY: COOKIES & SESSIONS
+// -----------------------------------------
+app.get('/visit-count', (req, res) => {
+  // 1. Check if the 'visits' cookie exists, if not start at 0
+  let visits = req.cookies.visits ? parseInt(req.cookies.visits) : 0;
+
+  // 2. Increment the counter
+  visits++;
+
+  // 3. Set the cookie back to the client (expires in 1 day)
+  res.cookie('visits', visits, { maxAge: 86400000, httpOnly: true });
+
+  // 4. Send the text response
+  res.send(`You have visited this page ${visits} time(s). Refresh to see the counter go up!`);
 });
 
 
